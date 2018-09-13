@@ -1,7 +1,7 @@
 # FIRST project
 # N-ything problem, a modified version of the famous N-queens Problem in AI
 
-import Hill
+import hill
 import genetic
 import annealing
 import board as b
@@ -24,6 +24,11 @@ if __name__ == "__main__":
 	mboard = b.Board()
 	for i in range(0,8):
 		for j in range(0,8):
-			print(mboard.ChessBoard[i][j])
+			print(mboard.ChessBoard[i][j],end=' ')
+		print()
+		
+	hill.solve_hill(mboard)
+	annealing.solve_annealing(mboard)
+	genetic.solve_genetic(mboard)
 
 
