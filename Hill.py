@@ -4,7 +4,6 @@
 
 import board
 
-print("this is hill.py")
 
 def solve_hill(Board):
     return

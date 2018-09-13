@@ -4,7 +4,6 @@
 
 import board
 
-print("this is genetic.py")
 
 def solve_genetic(Board):
     return

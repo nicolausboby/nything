@@ -6,6 +6,7 @@ import genetic
 import annealing
 import board as b
 
+
 file_input = "input.txt"
 piecelist = []
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
 		for j in range(0,8):
 			print(mboard.ChessBoard[i][j],end=' ')
 		print()
-		
+
 	hill.solve_hill(mboard)
 	annealing.solve_annealing(mboard)
 	genetic.solve_genetic(mboard)
