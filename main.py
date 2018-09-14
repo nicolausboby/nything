@@ -13,5 +13,5 @@ if __name__ == "__main__":
     mboard.print_board()
 
     Hill.solve_hill(mboard)
-    annealing.solve_annealing(mboard)
+    annealing.solve_annealing(mboard, 1000)
     genetic.solve_genetic(mboard)
