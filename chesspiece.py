@@ -16,15 +16,15 @@ class Chesspiece:
         self.y = y
         self.movement = []
 
-    def can_attack(self, other_piece):
+    def can_attack(self, x, y):
         if self.pieceType == self.queen:
-            return self.can_attack_queen(other_piece.x, other_piece.y)
+            return self.can_attack_queen(x, y)
         elif self.pieceType == self.rook:
-            return self.can_attack_rook(other_piece.x, other_piece.y)
+            return self.can_attack_rook(x, y)
         elif self.pieceType == self.bishop:
-            return self.can_attack_bishop(other_piece.x, other_piece.y)
+            return self.can_attack_bishop(x, y)
         elif self.pieceType == self.knight:
-            return self.can_attack_knight(other_piece.x, other_piece.y)
+            return self.can_attack_knight(x, y)
         return False
 
     def can_attack_queen(self, x, y):
