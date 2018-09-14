@@ -7,10 +7,6 @@ import annealing
 from board import Board
 
 
-file_input = "input.txt"
-piecelist = []
-
-
 if __name__ == "__main__":
 
     mboard = Board()

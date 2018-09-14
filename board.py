@@ -11,6 +11,7 @@ class Board:
         with open(file_input, 'rt') as f_in:
             self.pieces = []
             lines = f_in.readlines()
+
             for line in lines:
                 line.replace('\n', '')
                 row = line.split()
@@ -49,8 +50,23 @@ class Board:
 
     def print_board(self):
         board = [['.' for i in range(9)] for j in range(9)]
+
         for piece in self.pieces:
-            board[piece.x][piece.y] = piece.pieceType
+
+            if piece.pieceType == chesspiece.Chesspiece.knight:
+                piece_type_char = 'K'
+            elif piece.pieceType == chesspiece.Chesspiece.bishop:
+                piece_type_char = 'B'
+            elif piece.pieceType == chesspiece.Chesspiece.rook:
+                piece_type_char = 'R'
+            elif piece.pieceType == chesspiece.Chesspiece.queen:
+                piece_type_char = 'Q'
+
+            if piece.color == chesspiece.Chesspiece.black:
+                piece_type_char = piece_type_char.lower()
+
+            board[piece.x][piece.y] = piece_type_char
+
         for i in range(1, 9):
             for j in range(1, 9):
                 print(board[i][j], end=' ')
