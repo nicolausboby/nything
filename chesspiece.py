@@ -5,6 +5,8 @@ class Chesspiece:
     bishop = 2
     rook = 3
     queen = 4
+    black = 0
+    white = 1
 
     def __init__(self, piece_type, color, x, y):
         self.pieceType = piece_type
