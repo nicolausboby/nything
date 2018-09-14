@@ -6,49 +6,55 @@ class Chesspiece:
     rook = 3
     queen = 4
 
-    def __init__(self, pieceType, color, x, y):
-        self.pieceType = pieceType
+    def __init__(self, piece_type, color, x, y):
+        self.pieceType = piece_type
         self.color = color
         self.x = x
         self.y = y
         self.movement = []
 
-    def canAttack(x, y):
-        if self.pieceType == queen:
-            return self.canAttackQueen(x, y)
-        return false
+    def can_attack(self, other_piece):
+        if self.pieceType == self.queen:
+            return self.can_attack_queen(other_piece.x, other_piece.y)
+        elif self.pieceType == self.rook:
+            return self.can_attack_rook(other_piece.x, other_piece.y)
+        elif self.pieceType == self.bishop:
+            return self.can_attack_bishop(other_piece.x, other_piece.y)
+        elif self.pieceType == self.knight:
+            return self.can_attack_knight(other_piece.x, other_piece.y)
+        return False
 
-    def canAttackQueen(x, y):
+    def can_attack_queen(self, x, y):
         if self.x != x and self.y != y and self.x - self.y != x-y and self.y - self.x != y-x:
-            return false
-        return true
+            return False
+        return True
 
-    def canAttackRook(x, y):
+    def can_attack_rook(self, x, y):
         if self.x != x and self.y != y:
-            return false
-        return true
+            return False
+        return True
 
-    def canAttackKnight(x, y):
+    def can_attack_knight(self, x, y):
         if self.x + 2 == x and self.y+1 == y and self.x + 2 <= 8 and self.y + 1 <= 8:
-            return true
+            return True
         elif self.x - 2 == x and self.y+1 == y and self.x - 2 >= 1 and self.y + 1 <= 8:
-            return true
+            return True
         elif self.x + 2 == x and self.y-1 == y and self.x + 2 <= 8 and self.y - 1 >= 1:
-            return true
+            return True
         elif self.x - 2 == x and self.y-1 == y and self.x - 2 >= 1 and self.y - 1 >= 1:
-            return true
+            return True
         elif self.y + 2 == x and self.x-1 == y and self.x - 1 >= 1 and self.y + 2 <= 8:
-            return true
+            return True
         elif self.y - 2 == x and self.x-1 == y and self.x - 1 >= 1 and self.y - 2 >= 1:
-            return
+            return True
         elif self.y + 2 == x and self.x+1 == y and self.x + 1 <= 8 and self.y + 2 <= 8:
-            return true
+            return True
         elif self.y - 2 == x and self.x+1 == y and self.x + 1 <= 8 and self.y - 2 >= 1:
-            return true
+            return True
 
-        return false
+        return False
 
-    def canAttackBishop(x, y):
+    def can_attack_bishop(self, x, y):
         if self.x - self.y != x-y and self.y - self.x != y-x:
-            return false
-        return true
+            return False
+        return True
