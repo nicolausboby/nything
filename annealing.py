@@ -32,6 +32,7 @@ def solve_annealing(board, t):
 			elif boltzmann_dist(next_cost-ccost, descent_function("LINEAR", t, 10)):
 				board = temp_board
 				ccost = next_cost
+				descent_function("LINEAR", t, 10)
 				break
 	board.print_board()
 	print('cost = {}'.format(ccost))
@@ -39,8 +40,10 @@ def solve_annealing(board, t):
 
 
 def boltzmann_dist(delta_cost, t):
-	return np.exp(-delta_cost / t)
-
+	if t > 0:
+		return np.exp(-delta_cost / t)
+	else:
+		return np.exp(-delta_cost / 0.000001)
 
 def descent_function(func, t, rate):
 	if func == "LINEAR":
