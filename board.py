@@ -28,12 +28,13 @@ class Board:
                         pieceType = chesspiece.Chesspiece.rook
                     elif row[1] == 'QUEEN':
                         pieceType = chesspiece.Chesspiece.queen
+
                     x = random.randint(1, 8)
                     y = random.randint(1, 8)
                     while self.is_exist(x, y):
                         x = random.randint(1, 8)
                         y = random.randint(1, 8)
-                        print('a')
+
                     self.pieces.append(
                         chesspiece.Chesspiece(pieceType, color, x, y))
 
@@ -47,14 +48,10 @@ class Board:
         return 0
 
     def print_board(self):
-		board = [['.' for i in range(9)] for j in range(9)]
-
-		for piece in self.pieces:
-			board[piece.x][piece.y] = piece.pieceType
-
-		for i in range(1, 9):
-			for j in range(1, 9):
-				print(board[i][j], end=' ')
-			print()
-
-        return
+        board = [['.' for i in range(9)] for j in range(9)]
+        for piece in self.pieces:
+            board[piece.x][piece.y] = piece.pieceType
+        for i in range(1, 9):
+            for j in range(1, 9):
+                print(board[i][j], end=' ')
+            print()

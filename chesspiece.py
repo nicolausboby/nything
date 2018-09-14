@@ -1,4 +1,4 @@
-
+# TODO: Tambah keterangan file ini
 
 class Chesspiece:
     knight = 1

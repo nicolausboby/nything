@@ -4,7 +4,7 @@
 import Hill
 import genetic
 import annealing
-import board
+from board import Board
 
 
 file_input = "input.txt"
@@ -13,12 +13,8 @@ piecelist = []
 
 if __name__ == "__main__":
 
-    mboard = board.Board()
+    mboard = Board()
     mboard.print_board()
-    # for i in range(0, 8):
-    #     for j in range(0, 8):
-    #         print(".", end='')
-    #     print()
 
     Hill.solve_hill(mboard)
     annealing.solve_annealing(mboard)
