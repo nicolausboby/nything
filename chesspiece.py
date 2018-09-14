@@ -16,6 +16,12 @@ class Chesspiece:
         self.y = y
         self.movement = []
 
+    def __eq__(self, other):
+        if self.pieceType == other.pieceType and self.color == other.color and self.x == other.x and self.y == other.y:
+            return True
+        else:
+            return False
+
     def can_attack(self, x, y):
         if self.pieceType == self.queen:
             return self.can_attack_queen(x, y)
