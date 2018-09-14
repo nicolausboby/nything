@@ -46,13 +46,24 @@ class Board:
         return False
 
     def calculate_cost(self):
+        return self.same_color_cost() - self.diff_color_point()
+
+    def same_color_cost(self):
+        total = 0
+        for piece in self.pieces:
+            for other_piece in self.pieces:
+                if piece != other_piece and piece.color == other_piece.color and piece.can_attack(other_piece):
+                    total = total + 1
+
+        return total
+
+    def diff_color_point(self):
         return 0
 
     def print_board(self):
         board = [['.' for i in range(9)] for j in range(9)]
 
         for piece in self.pieces:
-
             if piece.pieceType == chesspiece.Chesspiece.knight:
                 piece_type_char = 'K'
             elif piece.pieceType == chesspiece.Chesspiece.bishop:
@@ -67,7 +78,10 @@ class Board:
 
             board[piece.x][piece.y] = piece_type_char
 
-        for i in range(1, 9):
+        for i in range(8,0,-1):
             for j in range(1, 9):
-                print(board[i][j], end=' ')
+                print(board[j][i], end=' ')
             print()
+        print('\n', self.same_color_cost(), '\t', self.diff_color_point())
+        for piece in self.pieces:
+            print(piece.x,',',piece.y)

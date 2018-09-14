@@ -1,5 +1,6 @@
 # TODO: Tambah keterangan file ini
 
+
 class Chesspiece:
     knight = 1
     bishop = 2
@@ -27,14 +28,14 @@ class Chesspiece:
         return False
 
     def can_attack_queen(self, x, y):
-        if self.x != x and self.y != y and self.x - self.y != x-y and self.y - self.x != y-x:
-            return False
-        return True
+        if self.x == x or self.y == y or abs(self.x-x) == abs(self.y-y):
+            return True
+        return False
 
     def can_attack_rook(self, x, y):
-        if self.x != x and self.y != y:
-            return False
-        return True
+        if self.x == x or self.y == y:
+            return True
+        return False
 
     def can_attack_knight(self, x, y):
         if self.x + 2 == x and self.y+1 == y and self.x + 2 <= 8 and self.y + 1 <= 8:
@@ -45,18 +46,18 @@ class Chesspiece:
             return True
         elif self.x - 2 == x and self.y-1 == y and self.x - 2 >= 1 and self.y - 1 >= 1:
             return True
-        elif self.y + 2 == x and self.x-1 == y and self.x - 1 >= 1 and self.y + 2 <= 8:
+        elif self.y + 2 == y and self.x-1 == x and self.x - 1 >= 1 and self.y + 2 <= 8:
             return True
-        elif self.y - 2 == x and self.x-1 == y and self.x - 1 >= 1 and self.y - 2 >= 1:
+        elif self.y - 2 == y and self.x-1 == x and self.x - 1 >= 1 and self.y - 2 >= 1:
             return True
-        elif self.y + 2 == x and self.x+1 == y and self.x + 1 <= 8 and self.y + 2 <= 8:
+        elif self.y + 2 == y and self.x+1 == x and self.x + 1 <= 8 and self.y + 2 <= 8:
             return True
-        elif self.y - 2 == x and self.x+1 == y and self.x + 1 <= 8 and self.y - 2 >= 1:
+        elif self.y - 2 == y and self.x+1 == x and self.x + 1 <= 8 and self.y - 2 >= 1:
             return True
 
         return False
 
     def can_attack_bishop(self, x, y):
-        if self.x - self.y != x-y and self.y - self.x != y-x:
-            return False
-        return True
+        if abs(self.x-x) == abs(self.y-y):
+            return True
+        return False
