@@ -10,22 +10,17 @@ import board
 file_input = "input.txt"
 piecelist = []
 
-def init():
-
-	return board.Board()
 
 if __name__ == "__main__":
 
-	mboard = init()
-	print(mboard)
+    mboard = board.Board
+    print(mboard)
 
-	for i in range(0,8):
-		for j in range(0,8):
-			print(".",end = ' ')
-		print()
+    for i in range(0, 8):
+        for j in range(0, 8):
+            print(".", end=' ')
+        print()
 
-	Hill.solve_hill(mboard)
-	annealing.solve_annealing(mboard)
-	genetic.solve_genetic(mboard)
-
-
+    Hill.solve_hill(mboard)
+    annealing.solve_annealing(mboard)
+    genetic.solve_genetic(mboard)
