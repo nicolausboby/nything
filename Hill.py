@@ -30,7 +30,7 @@ def solve_hill(board):
 			allmove.remove(select_move)
 			temp_board.pieces.remove(select_piece)
 			temp_board.pieces.append(
-				chesspiece.Chesspiece(select_piece.pieceType, select_piece.color, select_move[0], select_move[1]))
+				chesspiece.Chesspiece(select_piece.piece_type, select_piece.color, select_move[0], select_move[1]))
 			next_cost = temp_board.calculate_cost()
 			dE = next_cost - ccost
 			if dE < 0.0:

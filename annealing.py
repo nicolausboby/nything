@@ -10,62 +10,94 @@ import time
 
 
 def solve_annealing(board):
-	best_cost = 9999
+	input_runs = input('enter amount of trial :')
+	print('trial run(s) = ' + str(input_runs))
 	input_limit = input('enter iteration limit :')
 	print('limit = ' + str(input_limit))
 	limit = int(input_limit)
-	tmax = 10000
-	tmin = 0.1
-	r = -np.log(tmax/tmin)
-	start = time.time()
-	step = improve = accept = 0
-	while step < limit and best_cost > 0:
-		t = tmax * np.exp(r*step/limit)
-		if t <= 0:
-			break
-		step += 1
-		ccost = board.calculate_cost()
-		all_pieces = board.pieces
-		select_piece = all_pieces[random.randint(0, len(all_pieces) - 1)]
-		allmove = find_movement(select_piece, board)
-		while len(allmove) > 0:
-			temp_board = copy.deepcopy(board)
-			select_move = allmove[random.randint(0, len(allmove) - 1)]
-			allmove.remove(select_move)
-			temp_board.pieces.remove(select_piece)
-			temp_board.pieces.append(
-				chesspiece.Chesspiece(select_piece.pieceType, select_piece.color, select_move[0], select_move[1]))
-			next_cost = temp_board.calculate_cost()
-			dE = next_cost - ccost
-			# print('current cost	= {}'.format(ccost))
-			# print('next cost	= {}'.format(next_cost))
-			# print('t		= {}'.format(t))
-			# print(np.exp(-dE / t))
-			random_chance = random.random()
-			if dE > 0.0 and np.exp(-dE / t) > random_chance:
-				board = temp_board
-				ccost = next_cost
-				accept += 1
-				# print('ACCEPTED with random chance = {}'.format(random_chance))
+	best_result = {}
+
+	def solver(board, limit):
+		best_cost = 9999
+		ccost = 0
+		tmax = 10000
+		tmin = 0.1
+		r = -np.log(tmax/tmin)
+		end_time = start_time = time.time()
+		step = improve = accept = 0
+		while step < limit and best_cost > 0:
+			t = tmax * np.exp(r*step/limit)
+			if t <= 0:
 				break
-			else:  # dE < 0, next_cost < ccost
-				if dE < 0.0:
+			step += 1
+			ccost = board.calculate_cost()
+			all_pieces = board.pieces
+			select_piece = all_pieces[random.randint(0, len(all_pieces) - 1)]
+			allmove = find_movement(select_piece, board)
+			while len(allmove) > 0:
+				temp_board = copy.deepcopy(board)
+				select_move = allmove[random.randint(0, len(allmove) - 1)]
+				allmove.remove(select_move)
+				temp_board.pieces.remove(select_piece)
+				temp_board.pieces.append(
+					chesspiece.Chesspiece(select_piece.piece_type, select_piece.color, select_move[0], select_move[1]))
+				next_cost = temp_board.calculate_cost()
+				dE = next_cost - ccost
+				# print('current cost	= {}'.format(ccost))
+				# print('next cost	= {}'.format(next_cost))
+				# print('t		= {}'.format(t))
+				# print(np.exp(-dE / t))
+				random_chance = random.random()
+				if dE > 0.0 and np.exp(-dE / t) > random_chance:
 					board = temp_board
 					ccost = next_cost
-					improve += 1
-				# print('IMPROVED!')
-				if next_cost < best_cost:
-					best_cost = next_cost
-				break
-	board.print_board()
+					accept += 1
+					# print('ACCEPTED with random chance = {}'.format(random_chance))
+					break
+				else:  # dE < 0, next_cost < ccost
+					if dE < 0.0:
+						board = temp_board
+						ccost = next_cost
+						improve += 1
+					# print('IMPROVED!')
+					if next_cost < best_cost:
+						best_cost = next_cost
+					break
+		end_time = time.time()
+		total_time = end_time - start_time
+		result = {
+			"best_cost": best_cost,
+			"final_cost": ccost,
+			"total_time": total_time,
+			"improve": improve,
+			"accept": accept,
+			"step": step,
+			"board": board
+		}
+		return result
+
+	def get_best_result(new_result):
+		if len(best_result) == 0:
+			return new_result
+		elif best_result['best_cost'] > new_result['best_cost']:
+			return new_result
+		return best_result
+
+	for i in range(int(input_runs)):
+		board.randomize_pieces()
+		current_result = solver(board, limit)
+		best_result = get_best_result(current_result)
+		print(str(round((current_result['total_time'] * 1000), 4)) + ' ms' + ', cost =' + str(current_result['best_cost']))
+
+	best_result['board'].print_board()
 	print('\n\n================================================================')
 	print('\n-----------------SIMULATED ANNEALING ALGORITHM------------------\n')
-	print('final cost	= {}'.format(ccost))
-	print('best cost	= {}'.format(best_cost))
-	print('total step	= {}'.format(step))
-	print('improved	= {}'.format(improve))
-	print('accepted	= {}'.format(accept))
-	print('elapsed time	= {} ms'.format((time.time() - start) * 1000))
+	print('final cost	= {}'.format(best_result['final_cost']))
+	print('best cost	= {}'.format(best_result['best_cost']))
+	print('total step	= {}'.format(best_result['step']))
+	print('improved	= {}'.format(best_result['improve']))
+	print('accepted	= {}'.format(best_result['accept']))
+	print('elapsed time	= {} ms'.format(best_result['total_time'] * 1000))
 
 
 def descent_function(func, t, rate):
@@ -179,16 +211,16 @@ def find_movement(piece, board):
 					kmove.append([x, y])
 		return kmove
 
-	if piece.pieceType == chesspiece.Chesspiece.queen:
+	if piece.piece_type == chesspiece.Chesspiece.queen:
 		movement.extend(find_horizontal(piece, board))
 		movement.extend(find_vertical(piece, board))
 		movement.extend(find_diagonal(piece, board))
-	elif piece.pieceType == chesspiece.Chesspiece.rook:
+	elif piece.piece_type == chesspiece.Chesspiece.rook:
 		movement.extend(find_horizontal(piece, board))
 		movement.extend(find_vertical(piece, board))
-	elif piece.pieceType == chesspiece.Chesspiece.bishop:
+	elif piece.piece_type == chesspiece.Chesspiece.bishop:
 		movement.extend(find_diagonal(piece, board))
-	elif piece.pieceType == chesspiece.Chesspiece.knight:
+	elif piece.piece_type == chesspiece.Chesspiece.knight:
 		movement.extend(knight_move(piece, board))
 
 	return movement

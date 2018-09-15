@@ -10,8 +10,8 @@ class Board:
     def __init__(self):
         with open(file_input, 'rt') as f_in:
             self.pieces = []
-            lines = f_in.readlines()
 
+            lines = f_in.readlines()
             for line in lines:
                 line.replace('\n', '')
                 row = line.split()
@@ -22,13 +22,13 @@ class Board:
                         color = chesspiece.Chesspiece.black
 
                     if row[1] == 'KNIGHT':
-                        pieceType = chesspiece.Chesspiece.knight
+                        piece_type = chesspiece.Chesspiece.knight
                     elif row[1] == 'BISHOP':
-                        pieceType = chesspiece.Chesspiece.bishop
+                        piece_type = chesspiece.Chesspiece.bishop
                     elif row[1] == 'ROOK':
-                        pieceType = chesspiece.Chesspiece.rook
+                        piece_type = chesspiece.Chesspiece.rook
                     elif row[1] == 'QUEEN':
-                        pieceType = chesspiece.Chesspiece.queen
+                        piece_type = chesspiece.Chesspiece.queen
 
                     x = random.randint(1, 8)
                     y = random.randint(1, 8)
@@ -37,7 +37,22 @@ class Board:
                         y = random.randint(1, 8)
 
                     self.pieces.append(
-                        chesspiece.Chesspiece(pieceType, color, x, y))
+                        chesspiece.Chesspiece(piece_type, color, x, y))
+
+    def randomize_pieces(self):
+        old_pieces = self.pieces
+        self.pieces = []
+
+        for piece in old_pieces:
+            color = piece.color
+            piece_type = piece.piece_type
+            x = random.randint(1, 8)
+            y = random.randint(1, 8)
+            while self.is_exist(x, y):
+                x = random.randint(1, 8)
+                y = random.randint(1, 8)
+            self.pieces.append(
+                chesspiece.Chesspiece(piece_type, color, x, y))
 
     def is_exist(self, x, y):
         for piece in self.pieces:
@@ -64,13 +79,13 @@ class Board:
         board = [['.' for i in range(9)] for j in range(9)]
 
         for piece in self.pieces:
-            if piece.pieceType == chesspiece.Chesspiece.knight:
+            if piece.piece_type == chesspiece.Chesspiece.knight:
                 piece_type_char = 'K'
-            elif piece.pieceType == chesspiece.Chesspiece.bishop:
+            elif piece.piece_type == chesspiece.Chesspiece.bishop:
                 piece_type_char = 'B'
-            elif piece.pieceType == chesspiece.Chesspiece.rook:
+            elif piece.piece_type == chesspiece.Chesspiece.rook:
                 piece_type_char = 'R'
-            elif piece.pieceType == chesspiece.Chesspiece.queen:
+            elif piece.piece_type == chesspiece.Chesspiece.queen:
                 piece_type_char = 'Q'
 
             if piece.color == chesspiece.Chesspiece.black:
@@ -78,10 +93,8 @@ class Board:
 
             board[piece.x][piece.y] = piece_type_char
 
-        for i in range(8,0,-1):
+        for i in range(8, 0, -1):
             for j in range(1, 9):
                 print(board[j][i], end=' ')
             print()
         print('\n', self.same_color_cost(), '\t', self.diff_color_point())
-        for piece in self.pieces:
-            print(piece.x, ',', piece.y)
