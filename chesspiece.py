@@ -10,26 +10,26 @@ class Chesspiece:
     white = 1
 
     def __init__(self, piece_type, color, x, y):
-        self.pieceType = piece_type
+        self.piece_type = piece_type
         self.color = color
         self.x = x
         self.y = y
         self.movement = []
 
     def __eq__(self, other):
-        if self.pieceType == other.pieceType and self.color == other.color and self.x == other.x and self.y == other.y:
+        if self.piece_type == other.piece_type and self.color == other.color and self.x == other.x and self.y == other.y:
             return True
         else:
             return False
 
     def can_attack(self, x, y):
-        if self.pieceType == self.queen:
+        if self.piece_type == self.queen:
             return self.can_attack_queen(x, y)
-        elif self.pieceType == self.rook:
+        elif self.piece_type == self.rook:
             return self.can_attack_rook(x, y)
-        elif self.pieceType == self.bishop:
+        elif self.piece_type == self.bishop:
             return self.can_attack_bishop(x, y)
-        elif self.pieceType == self.knight:
+        elif self.piece_type == self.knight:
             return self.can_attack_knight(x, y)
         return False
 
