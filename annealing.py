@@ -6,44 +6,66 @@ import chesspiece
 import numpy as np
 import random
 import copy
+import time
 
-limit = 10000
 
-
-def solve_annealing(board, t):
-	counter = 0
-	while counter < limit:
-		counter += 1
+def solve_annealing(board):
+	best_cost = 0
+	input_limit = input('enter iteration limit :')
+	print('limit = ' + str(input_limit))
+	limit = int(input_limit)
+	tmax = 10000
+	tmin = 0.1
+	r = -np.log(tmax/tmin)
+	start = time.time()
+	step = improve = accept = 0
+	while step < limit:
+		t = tmax * np.exp(r*step/limit)
+		if t <= 0:
+			break
+		step += 1
 		ccost = board.calculate_cost()
 		all_pieces = board.pieces
-		select_piece = board.pieces[random.randint(0, len(all_pieces)-1)]
+		select_piece = all_pieces[random.randint(0, len(all_pieces) - 1)]
 		allmove = find_movement(select_piece, board)
 		while len(allmove) > 0:
 			temp_board = copy.deepcopy(board)
-			select_move = allmove[random.randint(0, len(allmove)-1)]
+			select_move = allmove[random.randint(0, len(allmove) - 1)]
 			allmove.remove(select_move)
 			temp_board.pieces.remove(select_piece)
-			temp_board.pieces.append(chesspiece.Chesspiece(	select_piece.pieceType, select_piece.color, select_move[0], select_move[1]))
+			temp_board.pieces.append(
+				chesspiece.Chesspiece(select_piece.pieceType, select_piece.color, select_move[0], select_move[1]))
 			next_cost = temp_board.calculate_cost()
-			if ccost > next_cost:
+			dE = next_cost - ccost
+			# print('current cost	= {}'.format(ccost))
+			# print('next cost	= {}'.format(next_cost))
+			# print('t		= {}'.format(t))
+			# print(np.exp(-dE / t))
+			random_chance = random.random()
+			if dE > 0.0 and np.exp(-dE / t) > random_chance:
 				board = temp_board
 				ccost = next_cost
+				accept += 1
+				# print('ACCEPTED with random chance = {}'.format(random_chance))
 				break
-			elif boltzmann_dist(next_cost-ccost, descent_function("LINEAR", t, 10)):
-				board = temp_board
-				ccost = next_cost
-				descent_function("LINEAR", t, 10)
+			else:  # dE < 0, next_cost < ccost
+				if dE < 0.0:
+					board = temp_board
+					ccost = next_cost
+					improve += 1
+				# print('IMPROVED!')
+				if next_cost < best_cost:
+					best_cost = next_cost
 				break
 	board.print_board()
-	print('cost = {}'.format(ccost))
-	print('iterated = {}'. format(counter))
+	print('\n\n================================================================')
+	print('final cost	= {}'.format(ccost))
+	print('step 		= {}'.format(step))
+	print('improve		= {}'.format(step))
+	# print('accept 	= {}'.format(accept))
+	print('best cost	= {}'.format(best_cost))
+	print('elapsed time	= {} ms'.format((time.time() - start) * 1000))
 
-
-def boltzmann_dist(delta_cost, t):
-	if t > 0:
-		return np.exp(-delta_cost / t)
-	else:
-		return np.exp(-delta_cost / 0.000001)
 
 def descent_function(func, t, rate):
 	if func == "LINEAR":
