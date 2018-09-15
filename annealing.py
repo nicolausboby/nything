@@ -10,7 +10,7 @@ import time
 
 
 def solve_annealing(board):
-	best_cost = 0
+	best_cost = 9999
 	input_limit = input('enter iteration limit :')
 	print('limit = ' + str(input_limit))
 	limit = int(input_limit)
@@ -19,7 +19,7 @@ def solve_annealing(board):
 	r = -np.log(tmax/tmin)
 	start = time.time()
 	step = improve = accept = 0
-	while step < limit:
+	while step < limit and best_cost > 0:
 		t = tmax * np.exp(r*step/limit)
 		if t <= 0:
 			break
@@ -59,11 +59,12 @@ def solve_annealing(board):
 				break
 	board.print_board()
 	print('\n\n================================================================')
+	print('\n-----------------SIMULATED ANNEALING ALGORITHM------------------\n')
 	print('final cost	= {}'.format(ccost))
-	print('step 		= {}'.format(step))
-	print('improve		= {}'.format(step))
-	# print('accept 	= {}'.format(accept))
 	print('best cost	= {}'.format(best_cost))
+	print('total step	= {}'.format(step))
+	print('improved	= {}'.format(improve))
+	print('accepted	= {}'.format(accept))
 	print('elapsed time	= {} ms'.format((time.time() - start) * 1000))
 
 
