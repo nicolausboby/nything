@@ -13,14 +13,15 @@ def solve_annealing(board):
 	input_runs = input('enter amount of trial :')
 	print('trial run(s) = ' + str(input_runs))
 	input_limit = input('enter iteration limit :')
-	print('limit = ' + str(input_limit))
+	print('limit = ' + str(input_limit) + '\n')
 	limit = int(input_limit)
 	best_result = {}
+	success = 0
 
 	def solver(board, limit):
 		best_cost = 9999
 		ccost = 0
-		tmax = 10000
+		tmax = 1000
 		tmin = 0.1
 		r = -np.log(tmax/tmin)
 		end_time = start_time = time.time()
@@ -86,18 +87,26 @@ def solve_annealing(board):
 	for i in range(int(input_runs)):
 		board.randomize_pieces()
 		current_result = solver(board, limit)
+		if current_result['best_cost'] == 0:
+			success += 1
 		best_result = get_best_result(current_result)
 		print(str(round((current_result['total_time'] * 1000), 4)) + ' ms' + ', cost =' + str(current_result['best_cost']))
+	success_stat = round((success / int(input_runs)), 4)
 
+	print('\n')
 	best_result['board'].print_board()
 	print('\n\n================================================================')
 	print('\n-----------------SIMULATED ANNEALING ALGORITHM------------------\n')
-	print('final cost	= {}'.format(best_result['final_cost']))
-	print('best cost	= {}'.format(best_result['best_cost']))
-	print('total step	= {}'.format(best_result['step']))
-	print('improved	= {}'.format(best_result['improve']))
-	print('accepted	= {}'.format(best_result['accept']))
-	print('elapsed time	= {} ms'.format(best_result['total_time'] * 1000))
+	print('total run(s)	= {}'. format(input_runs))
+	print('solution found = {} times, with statistic {} %'.format(success, success_stat * 100))
+	print('\nBEST RESULT :')
+	print('	>final cost	= {}'.format(best_result['final_cost']))
+	print('	>best cost	= {}'.format(best_result['best_cost']))
+	print('	>total step	= {}'.format(best_result['step']))
+	print('	>improved	= {}'.format(best_result['improve']))
+	print('	>accepted	= {}'.format(best_result['accept']))
+	print('	>elapsed time	= {} ms'.format(best_result['total_time'] * 1000))
+	print('\n================================================================\n')
 
 
 def descent_function(func, t, rate):
