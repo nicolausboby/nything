@@ -73,7 +73,13 @@ class Board:
         return total
 
     def diff_color_point(self):
-        return 0
+        total = 0
+        for piece in self.pieces:
+            for other_piece in self.pieces:
+                if piece != other_piece and piece.color != other_piece.color and piece.can_attack(other_piece.x, other_piece.y):
+                    total = total + 1
+
+        return total
 
     def print_board(self):
         board = [['.' for i in range(9)] for j in range(9)]
