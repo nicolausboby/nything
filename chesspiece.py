@@ -1,7 +1,10 @@
-# TODO: Tambah keterangan file ini
+# chesspiece berisi kelas Chesspiece
+
+# Kelas Chesspiece merepresentasikan sebuah bidak dalam papan catur
 
 
 class Chesspiece:
+    # Konstanta-konstanta yang digunakan pada kelas Chesspiece
     knight = 1
     bishop = 2
     rook = 3
@@ -16,6 +19,7 @@ class Chesspiece:
         4: 'queen'
     }
 
+    # Konstruktor Chesspiece melakukan assignment nilai-nilai dasar dari piece
     def __init__(self, piece_type, color, x, y):
         self.piece_type = piece_type
         self.color = color
@@ -23,16 +27,20 @@ class Chesspiece:
         self.y = y
         self.movement = []
 
+    # Representasi string dari chesspiece
     def __repr__(self):
         color = 'black' if self.color == 0 else 'white'
         return '{} {} at ({}, {})'.format(color, self.type_codes[self.piece_type], self.x, self.y)
 
+    # Operator assignment untuk Chesspiece
     def __eq__(self, other):
         if self.piece_type == other.piece_type and self.color == other.color and self.x == other.x and self.y == other.y:
             return True
         else:
             return False
 
+    # can_attack mengembalikan nilai True jika Chesspiece dapat
+    # menyerang Chesspiece lain pada posisi (x,y)
     def can_attack(self, x, y):
         if self.piece_type == self.queen:
             return self.can_attack_queen(x, y)

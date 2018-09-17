@@ -1,7 +1,6 @@
 # FIRST project
 # Simulated annealing algorithm
 
-import board
 import chesspiece
 import numpy as np
 import random
@@ -10,6 +9,15 @@ import time
 
 
 def solve_annealing(board):
+	""" main function for the Simulated Annealing algorithm for N-ything problem
+
+	:param board: Inisial state of the board
+
+	# I.S : unsolved board
+	# F.S : solved board (global or local maximum)
+	Solution printed out
+	"""
+	# initialisation and read input parameters
 	input_runs = input('enter amount of trial: ')
 	print('trial run(s) = ' + str(input_runs))
 	input_limit = input('enter iteration limit: ')
@@ -19,15 +27,27 @@ def solve_annealing(board):
 	success = 0
 
 	def solver(board, limit):
+		""" function to solve a simulated algorithm once, iteration limited
+
+		:param board: Inisial state of the board
+		:param limit: iteration limit
+		:return: Solution board, costs, time, and statistics
+		"""
 		best_cost = 9999
 		ccost = 0
 		tmax = 1000
 		tmin = 0.1
-		r = -np.log(tmax/tmin)
-		end_time = start_time = time.time()
+		r = -np.log(tmax / tmin)
+		start_time = time.time()
 		step = improve = accept = 0
+
+		# loop the process of each iteration
+		# the loop will stop if the limit step has been reached, or solution has been found
 		while step < limit and best_cost > 0:
-			t = tmax * np.exp(r*step/limit)
+			t = tmax * np.exp(r * step / limit)
+
+			# making sure that t is a feasible temperature parameter, above zero
+			# and finding all of the possible movement of a random chess piece
 			if t <= 0:
 				break
 			step += 1
@@ -35,6 +55,10 @@ def solve_annealing(board):
 			all_pieces = board.pieces
 			select_piece = all_pieces[random.randint(0, len(all_pieces) - 1)]
 			allmove = find_movement(select_piece, board)
+
+			# checking a random move of the previously selected piece
+			# if the move has better 'energy' select it,
+			# if it is not, with a probability from a distribution might be selected
 			while len(allmove) > 0:
 				temp_board = copy.deepcopy(board)
 				select_move = allmove[random.randint(0, len(allmove) - 1)]
@@ -44,26 +68,24 @@ def solve_annealing(board):
 					chesspiece.Chesspiece(select_piece.piece_type, select_piece.color, select_move[0], select_move[1]))
 				next_cost = temp_board.calculate_cost()
 				dE = next_cost - ccost
-				# print('current cost	= {}'.format(ccost))
-				# print('next cost	= {}'.format(next_cost))
-				# print('t		= {}'.format(t))
-				# print(np.exp(-dE / t))
 				random_chance = random.random()
+
+				# evaluating Boltzmann's Distribution
 				if dE > 0.0 and np.exp(-dE / t) > random_chance:
 					board = temp_board
 					ccost = next_cost
 					accept += 1
-					# print('ACCEPTED with random chance = {}'.format(random_chance))
 					break
 				else:  # dE < 0, next_cost < ccost
 					if dE < 0.0:
 						board = temp_board
 						ccost = next_cost
 						improve += 1
-					# print('IMPROVED!')
 					if next_cost < best_cost:
 						best_cost = next_cost
 					break
+
+		# returning the result and time spent
 		end_time = time.time()
 		total_time = end_time - start_time
 		result = {
@@ -78,21 +100,31 @@ def solve_annealing(board):
 		return result
 
 	def get_best_result(new_result):
+		""" update the value of best result
+
+		:param new_result: a new result
+		:return: (best_result) : compared best result
+		"""
 		if len(best_result) == 0:
 			return new_result
 		elif best_result['best_cost'] > new_result['best_cost']:
 			return new_result
 		return best_result
 
+	# continuation of the main function
+	# running trials run, and searching for the best result
 	for i in range(int(input_runs)):
 		board.randomize_pieces()
 		current_result = solver(board, limit)
 		if current_result['best_cost'] == 0:
 			success += 1
 		best_result = get_best_result(current_result)
-		print(str(round((current_result['total_time'] * 1000), 4)) + ' ms' + ', cost =' + str(current_result['best_cost']))
+		print(str(round((current_result['total_time'] * 1000), 4)) + ' ms' + ', cost =' + str(
+			current_result['best_cost']))
 	success_stat = round((success / int(input_runs)), 4)
 
+	# Output section
+	#
 	print('\n')
 	best_result['board'].print_board()
 	print('\n\n================================================================')
@@ -109,16 +141,14 @@ def solve_annealing(board):
 	print('\n================================================================\n')
 
 
-def descent_function(func, t, rate):
-	if func == "LINEAR":
-		return t - rate
-	elif func == "LOG":
-		return t * rate
-	elif func == "CONSTANT":
-		return t
-
-
 def find_movement(piece, board):
+	""" finds all of the possible movement of a input chess piece ont the board
+
+	:param piece: selected chess piece
+	:param board: current state of the board
+
+	:return: movement -> a list of possible moves
+	"""
 	movement = []
 
 	def find_horizontal(piece, board):
