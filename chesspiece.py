@@ -9,12 +9,23 @@ class Chesspiece:
     black = 0
     white = 1
 
+    type_codes = {
+        1: 'knight',
+        2: 'bishop',
+        3: 'rook',
+        4: 'queen'
+    }
+
     def __init__(self, piece_type, color, x, y):
         self.piece_type = piece_type
         self.color = color
         self.x = x
         self.y = y
         self.movement = []
+
+    def __repr__(self):
+        color = 'black' if self.color == 0 else 'white'
+        return '{} {} at ({}, {})'.format(color, self.type_codes[self.piece_type], self.x, self.y)
 
     def __eq__(self, other):
         if self.piece_type == other.piece_type and self.color == other.color and self.x == other.x and self.y == other.y:

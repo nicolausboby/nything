@@ -39,6 +39,9 @@ class Board:
                     self.pieces.append(
                         chesspiece.Chesspiece(piece_type, color, x, y))
 
+    def __repr__(self):
+        return str(self.pieces)
+
     def randomize_pieces(self):
         old_pieces = self.pieces
         self.pieces = []
@@ -53,6 +56,16 @@ class Board:
                 y = random.randint(1, 8)
             self.pieces.append(
                 chesspiece.Chesspiece(piece_type, color, x, y))
+
+    def mutate(self):
+        piece_idx = random.randint(0, len(self.pieces) - 1)
+        x = random.randint(1, 8)
+        y = random.randint(1, 8)
+        while self.is_exist(x, y):
+            x = random.randint(1, 8)
+            y = random.randint(1, 8)
+        self.pieces[piece_idx].x = x
+        self.pieces[piece_idx].y = y
 
     def is_exist(self, x, y):
         for piece in self.pieces:
