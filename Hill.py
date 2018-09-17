@@ -11,6 +11,14 @@ from annealing import find_movement
 
 
 def solve_hill(board):
+	""" main function for the Hill Climbing algorithm for N-ything problem
+
+	:param board: Inisial state of the board
+
+	# I.S : unsolved board
+	# F.S : solved board (global or local maximum)
+	Solution printed out
+	"""
 	input_runs = input('enter amount of trial :')
 	print('trial run(s) = ' + str(input_runs))
 	input_limit = input('enter iteration limit :')
@@ -20,6 +28,11 @@ def solve_hill(board):
 	success = 0
 
 	def get_best_result(new_result):
+		""" update the value of best result
+
+		:param new_result: a new result
+		:return: (best_result) : compared best result
+		"""
 		if len(best_result) == 0:
 			return new_result
 		elif best_result['best_cost'] > new_result['best_cost']:
@@ -27,10 +40,16 @@ def solve_hill(board):
 		return best_result
 
 	def solver(board, limit):
+		""" function to solve a simulated algorithm once, iteration limited
+
+		:param board: Inisial state of the board
+		:param limit: iteration limit
+		:return: Solution board, costs, time
+		"""
 		best_cost = 9999
 		ccost = 0
 		step = improve = 0
-		end_time = start_time = time.time()
+		start_time = time.time()
 		while step < limit and best_cost > 0:
 			step += 1
 			ccost = board.calculate_cost()
@@ -50,7 +69,6 @@ def solve_hill(board):
 					board = temp_board
 					ccost = next_cost
 					improve += 1
-				# print('IMPROVED!')
 				if next_cost < best_cost:
 					best_cost = next_cost
 				break
@@ -66,6 +84,8 @@ def solve_hill(board):
 		}
 		return result
 
+	# continuation of the main function
+	# running trials run, and searching for the best result
 	for i in range(int(input_runs)):
 		board.randomize_pieces()
 		current_result = solver(board, limit)
@@ -75,6 +95,8 @@ def solve_hill(board):
 		print(str(round((current_result['total_time'] * 1000), 4)) + ' ms' + ', cost =' + str(current_result['best_cost']))
 	success_stat = round((success / int(input_runs)), 4)
 
+	# Output section
+	#
 	print('\n')
 	best_result['board'].print_board()
 	print('\n\n================================================================')
