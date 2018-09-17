@@ -1,12 +1,17 @@
-# Chessboard containing
+# Chessboard berisi kelas Board
 
 import chesspiece
 import random
 
 file_input = 'input.txt'
 
+# Kelas Board merepresentasikan papan catur
+# yang akan digunakan dalam pemecahan masalah
+
 
 class Board:
+    # Konstruktor Board melakukan pembacaan file input
+    # dan inisialisasi board awal secara acak
     def __init__(self):
         with open(file_input, 'rt') as f_in:
             self.pieces = []
@@ -39,6 +44,7 @@ class Board:
                     self.pieces.append(
                         chesspiece.Chesspiece(piece_type, color, x, y))
 
+    # randomize_pieces melakukan pengacakan terhadap posisi pieces
     def randomize_pieces(self):
         old_pieces = self.pieces
         self.pieces = []
@@ -54,15 +60,18 @@ class Board:
             self.pieces.append(
                 chesspiece.Chesspiece(piece_type, color, x, y))
 
+    # is_exist mengembalikan True jika terdapat sebuah piece pada x,y dalam board
     def is_exist(self, x, y):
         for piece in self.pieces:
             if piece.x == x and piece.y == y:
                 return True
         return False
 
+    # calculate_cost mengembalikan total cost dari suatu kondisi board
     def calculate_cost(self):
         return self.same_color_cost() - self.diff_color_point()
 
+    # same_color_cost mengembalikan total nilai cost dari pieces yang berwarna sama
     def same_color_cost(self):
         total = 0
         for piece in self.pieces:
@@ -72,6 +81,7 @@ class Board:
 
         return total
 
+    # diff_color_point mengembalikan total nilai poin dari pieces yang berwarna berbeda
     def diff_color_point(self):
         total = 0
         for piece in self.pieces:
@@ -81,6 +91,7 @@ class Board:
 
         return total
 
+    # print_board mencetak board pada layar
     def print_board(self):
         board = [['.' for i in range(9)] for j in range(9)]
 
