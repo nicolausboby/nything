@@ -5,5 +5,5 @@
 import board
 
 
-def solve_genetic(Board):
+def solve_genetic(board):
     return

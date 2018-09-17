@@ -10,9 +10,9 @@ import time
 
 
 def solve_annealing(board):
-	input_runs = input('enter amount of trial :')
+	input_runs = input('enter amount of trial: ')
 	print('trial run(s) = ' + str(input_runs))
-	input_limit = input('enter iteration limit :')
+	input_limit = input('enter iteration limit: ')
 	print('limit = ' + str(input_limit) + '\n')
 	limit = int(input_limit)
 	best_result = {}
@@ -97,15 +97,15 @@ def solve_annealing(board):
 	best_result['board'].print_board()
 	print('\n\n================================================================')
 	print('\n-----------------SIMULATED ANNEALING ALGORITHM------------------\n')
-	print('total run(s)	= {}'. format(input_runs))
-	print('solution found = {} times, with statistic {} %'.format(success, success_stat * 100))
-	print('\nBEST RESULT :')
-	print('	>final cost	= {}'.format(best_result['final_cost']))
-	print('	>best cost	= {}'.format(best_result['best_cost']))
-	print('	>total step	= {}'.format(best_result['step']))
-	print('	>improved	= {}'.format(best_result['improve']))
-	print('	>accepted	= {}'.format(best_result['accept']))
-	print('	>elapsed time	= {} ms'.format(best_result['total_time'] * 1000))
+	print('Total run(s):     {}'.format(input_runs))
+	print('Solution found:   {} times, with statistic {} %'.format(success, success_stat * 100))
+	print('\nBEST RESULT:')
+	print('  > final cost:   {}'.format(best_result['final_cost']))
+	print('  > best cost:    {}'.format(best_result['best_cost']))
+	print('  > total step:   {}'.format(best_result['step']))
+	print('  > improved:     {}'.format(best_result['improve']))
+	print('  > accepted:     {}'.format(best_result['accept']))
+	print('  > elapsed time: {} ms'.format(best_result['total_time'] * 1000))
 	print('\n================================================================\n')
 
 
