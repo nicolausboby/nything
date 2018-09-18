@@ -12,37 +12,41 @@ file_input = 'input.txt'
 class Board:
     # Konstruktor Board melakukan pembacaan file input
     # dan inisialisasi board awal secara acak
-    def __init__(self):
-        with open(file_input, 'rt') as f_in:
-            self.pieces = []
+    def __init__(self, pieces=None):
+        if pieces is None:
+            with open(file_input, 'rt') as f_in:
+                self.pieces = []
 
-            lines = f_in.readlines()
-            for line in lines:
-                line.replace('\n', '')
-                row = line.split()
-                for i in range(int(row[2])):
-                    if row[0] == 'WHITE':
-                        color = chesspiece.Chesspiece.white
-                    elif row[0] == 'BLACK':
-                        color = chesspiece.Chesspiece.black
+                lines = f_in.readlines()
+                for line in lines:
+                    line.replace('\n', '')
+                    row = line.split()
+                    for i in range(int(row[2])):
+                        if row[0] == 'WHITE':
+                            color = chesspiece.Chesspiece.white
+                        elif row[0] == 'BLACK':
+                            color = chesspiece.Chesspiece.black
 
-                    if row[1] == 'KNIGHT':
-                        piece_type = chesspiece.Chesspiece.knight
-                    elif row[1] == 'BISHOP':
-                        piece_type = chesspiece.Chesspiece.bishop
-                    elif row[1] == 'ROOK':
-                        piece_type = chesspiece.Chesspiece.rook
-                    elif row[1] == 'QUEEN':
-                        piece_type = chesspiece.Chesspiece.queen
+                        if row[1] == 'KNIGHT':
+                            piece_type = chesspiece.Chesspiece.knight
+                        elif row[1] == 'BISHOP':
+                            piece_type = chesspiece.Chesspiece.bishop
+                        elif row[1] == 'ROOK':
+                            piece_type = chesspiece.Chesspiece.rook
+                        elif row[1] == 'QUEEN':
+                            piece_type = chesspiece.Chesspiece.queen
 
-                    x = random.randint(1, 8)
-                    y = random.randint(1, 8)
-                    while self.is_exist(x, y):
                         x = random.randint(1, 8)
                         y = random.randint(1, 8)
+                        while self.is_exist(x, y):
+                            x = random.randint(1, 8)
+                            y = random.randint(1, 8)
 
-                    self.pieces.append(
-                        chesspiece.Chesspiece(piece_type, color, x, y))
+                        self.pieces.append(
+                            chesspiece.Chesspiece(piece_type, color, x, y))
+        
+        else:
+            self.pieces = pieces
 
     # Representasi string dari objek board
     def __repr__(self):
@@ -80,6 +84,16 @@ class Board:
         for piece in self.pieces:
             if piece.x == x and piece.y == y:
                 return True
+        return False
+
+    # have_conflicts mengembalikan true jika ada 2 piece yang menempati tempat yang sama pada board
+    def have_conflicts(self):
+        locations = set()
+        for piece in self.pieces:
+            if (piece.x, piece.y) in locations:
+                return True
+            else:
+                locations.add((piece.x, piece.y))
         return False
 
     # calculate_cost mengembalikan total cost dari suatu kondisi board
