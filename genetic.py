@@ -101,7 +101,6 @@ def solve_genetic(board):
         print(' - Average population fitness: {}'.format(curr_best_avg_fitness))
         print(' - Best fitness: {}'.format(curr_best_fitness))
         print(' - Best board configuration:')
-        curr_best_config.print_board()
         print()
         
         if best_config is None:
