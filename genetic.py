@@ -6,6 +6,7 @@ from copy import deepcopy
 from random import randint, uniform
 from time import time, sleep
 from math import exp
+from operator import itemgetter
 
 from board import Board
 
@@ -82,9 +83,7 @@ def solve_genetic(board):
     population_count = int(input('Enter number of sample population in every generation: '))
     mutation_probability = float(input('Enter sample mutation probability: '))
     
-    success_count = 0
-    first_success = None
-    first_success_found_at = 0
+    best_config = None
     best_fitness = None
     best_avg_fitness = None
     start_time = time()
@@ -97,51 +96,32 @@ def solve_genetic(board):
         population = combine(parent_selection_dist, population_count)
         population = mutate(population, mutation_probability)
         
-        curr_best_fitness = max(fitness for _, fitness in population)
+        curr_best_config, curr_best_fitness = max((config for config in population), key=itemgetter(1))
         curr_best_avg_fitness = sum(fitness for _, fitness in population) / population_count
-        print(' - Best fitness: {}'.format(curr_best_fitness))
         print(' - Average population fitness: {}'.format(curr_best_avg_fitness))
+        print(' - Best fitness: {}'.format(curr_best_fitness))
+        print(' - Best board configuration:')
+        curr_best_config.print_board()
+        print()
         
-        if best_fitness is None:
+        if best_config is None:
+            best_config = curr_best_config
             best_fitness = curr_best_fitness
             best_avg_fitness = curr_best_avg_fitness
         else:
             if curr_best_fitness > best_fitness:
+                best_config = curr_best_config
                 best_fitness = curr_best_fitness
             if curr_best_avg_fitness > best_avg_fitness:
                 best_avg_fitness = curr_best_avg_fitness
 
-        curr_generation_solution = solution(population)
-        if curr_generation_solution is not None:
-            success_count += 1
-            if first_success is None:
-                first_success = curr_generation_solution
-                first_success_found_at = i + 1
-            print(' Solution found!')
-            curr_generation_solution.print_board()
-
-        print()
-
-    if first_success:
-        print('\nSOLUTION FOUND:\n')
-        first_success.print_board()
-        print('\n\n================================================================')
-        print('\n---------------------- GENETIC ALGORITHM -----------------------\n')
-        print('Generation(s):    {}'.format(max_num_generations))
-        print('Solutions found:  {} times, first found at generation {}'.format(success_count, first_success_found_at))
-        print('\nFINAL RESULT:')
-        print('  > best population average fitness:   {}'.format(best_avg_fitness))
-        print('  > best fitness:    {}'.format(best_fitness))
-        print('  > elapsed time:    {} ms'.format((time() - start_time) * 1000))
-        print('\n================================================================\n')
-    else:
-        print('\nNO SOLUTION FOUND')
-        print('\n================================================================')
-        print('\n---------------------- GENETIC ALGORITHM -----------------------\n')
-        print('Generation(s):    {}'.format(max_num_generations))
-        print('Solutions found:  none')
-        print('\nFINAL RESULT:')
-        print('  > best population average fitness:   {}'.format(best_avg_fitness))
-        print('  > best fitness:    {}'.format(best_fitness))
-        print('  > elapsed time:    {} ms'.format((time() - start_time) * 1000))
-        print('\n================================================================\n')
+    print('\nBEST SOLUTION:\n')
+    best_config.print_board()
+    print('\n================================================================')
+    print('\n---------------------- GENETIC ALGORITHM -----------------------\n')
+    print('Generation(s):    {}'.format(max_num_generations))
+    print('\nRESULT:')
+    print('  > best population average fitness:   {}'.format(best_avg_fitness))
+    print('  > best fitness:    {}'.format(best_fitness))
+    print('  > elapsed time:    {} ms'.format((time() - start_time) * 1000))
+    print('\n================================================================\n')
