@@ -5,6 +5,7 @@ import random
 
 file_input = 'input.txt'
 
+
 # Kelas Board merepresentasikan papan catur
 # yang akan digunakan dalam pemecahan masalah
 
@@ -44,16 +45,20 @@ class Board:
 
                         self.pieces.append(
                             chesspiece.Chesspiece(piece_type, color, x, y))
-        
+
         else:
             self.pieces = pieces
 
-    # Representasi string dari objek board
     def __repr__(self):
+        """
+        :return: string representation of object board in pieces list
+        """
         return str(self.pieces)
 
-    # randomize_pieces melakukan pengacakan terhadap posisi pieces
     def randomize_pieces(self):
+        """ randomize the state of pieces on board
+        :return: None
+        """
         old_pieces = self.pieces
         self.pieces = []
 
@@ -68,8 +73,10 @@ class Board:
             self.pieces.append(
                 chesspiece.Chesspiece(piece_type, color, x, y))
 
-    # mengubah posisi salah satu piece dalam board secara random
     def mutate(self):
+        """ move one chess piece on the board to random cell
+        :return: Nothing
+        """
         piece_idx = random.randint(0, len(self.pieces) - 1)
         x = random.randint(1, 8)
         y = random.randint(1, 8)
@@ -79,15 +86,21 @@ class Board:
         self.pieces[piece_idx].x = x
         self.pieces[piece_idx].y = y
 
-    # is_exist mengembalikan True jika terdapat sebuah piece pada x,y dalam board
     def is_exist(self, x, y):
+        """ checks if a chess piece is currently in the position x, y
+        :param x: position on the x axis
+        :param y: position on the y axis
+        :return: True if there is a piece in x, y, otherwise return False
+        """
         for piece in self.pieces:
             if piece.x == x and piece.y == y:
                 return True
         return False
 
-    # have_conflicts mengembalikan true jika ada 2 piece yang menempati tempat yang sama pada board
     def have_conflicts(self):
+        """ checks if there are two pieces on the same cell
+        :return: True if there are more than one piece on the same cell
+        """
         locations = set()
         for piece in self.pieces:
             if (piece.x, piece.y) in locations:
@@ -96,8 +109,10 @@ class Board:
                 locations.add((piece.x, piece.y))
         return False
 
-    # calculate_cost mengembalikan total cost dari suatu kondisi board
     def calculate_cost(self):
+        """ calculate the total cost of the board
+        :return:
+        """
         return self.same_color_cost() - self.diff_color_point()
 
     # same_color_cost mengembalikan total nilai cost dari pieces yang berwarna sama
@@ -105,23 +120,64 @@ class Board:
         total = 0
         for piece in self.pieces:
             for other_piece in self.pieces:
-                if piece != other_piece and piece.color == other_piece.color and piece.can_attack(other_piece.x, other_piece.y):
+                if piece != other_piece and piece.color == other_piece.color and piece.can_attack(
+                        other_piece.x, other_piece.y) and not self.is_path_blocked(piece, other_piece):
                     total = total + 1
 
         return total
 
-    # diff_color_point mengembalikan total nilai poin dari pieces yang berwarna berbeda
+    def is_path_blocked(self, piece, other_piece):
+        """ I.S : piece can attack other_piece
+        :param piece: current piece for path checking
+        :param other_piece: tested attacked piece
+        :return: True if there is a blocking piece in current piece path to other_piece, otherwise return false
+        """
+        if piece.piece_type == chesspiece.Chesspiece.knight:
+            return False
+
+        if piece.x > other_piece.x:
+            delta_x = -1
+        elif piece.x < other_piece.x:
+            delta_x = 1
+        else:
+            delta_x = 0
+
+        if piece.y > other_piece.y:
+            delta_y = -1
+        elif piece.y < other_piece.y:
+            delta_y = 1
+        else:
+            delta_y = 0
+
+        blocked = False
+        x = piece.x + delta_x
+        y = piece.y + delta_y
+
+        while 0 < x < 9 and 0 < y < 9 and not blocked and x != other_piece.x and y != other_piece.y:
+            if self.is_exist(x, y):
+                blocked = True
+            else:
+                x += delta_x
+                y += delta_y
+        return blocked
+
     def diff_color_point(self):
+        """ calculate the point of the board with black and white pieces
+        :return: total point
+        """
         total = 0
         for piece in self.pieces:
             for other_piece in self.pieces:
-                if piece != other_piece and piece.color != other_piece.color and piece.can_attack(other_piece.x, other_piece.y):
+                if piece != other_piece and piece.color != other_piece.color and piece.can_attack(
+                        other_piece.x, other_piece.y) and not self.is_path_blocked(piece, other_piece):
                     total = total + 1
 
         return total
 
-    # print_board mencetak board pada layar
     def print_board(self):
+        """
+        Print the current state of board with its pieces
+        """
         board = [['.' for i in range(9)] for j in range(9)]
 
         for piece in self.pieces:

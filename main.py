@@ -10,7 +10,7 @@
 # Cornelius Yan M.   - 13516113
 
 
-import hill
+import Hill
 import genetic
 import annealing
 from board import Board
@@ -21,6 +21,6 @@ if __name__ == "__main__":
 
     mboard = Board()
 
-    hill.solve_hill(mboard)
+    Hill.solve_hill(mboard)
     annealing.solve_annealing(mboard)
     genetic.solve_genetic(mboard)
