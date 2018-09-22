@@ -39,9 +39,12 @@ class Chesspiece:
         else:
             return False
 
-    # can_attack mengembalikan nilai True jika Chesspiece dapat
-    # menyerang Chesspiece lain pada posisi (x,y)
     def can_attack(self, x, y):
+        """ checks if current chess piece can attack x, y cell
+        :param x:
+        :param y:
+        :return:
+        """
         if self.piece_type == self.queen:
             return self.can_attack_queen(x, y)
         elif self.piece_type == self.rook:
