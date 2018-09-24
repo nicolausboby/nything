@@ -7,16 +7,22 @@ from random import randint, uniform
 from time import time, sleep
 from math import exp
 from operator import itemgetter
+from typing import List, Tuple
 
 from board import Board
 
 
-# Helpers
-def calculate_fitness(board, max_cost):
+# Type aliases
+Population = List[Tuple[Board, int]]
+
+
+def calculate_fitness(board: Board, max_cost: int) -> int:
+    """Calculate the fitness of a board configuration."""
     return (max_cost - board.calculate_cost()) ** 3
 
 
-def init_population(board, population_count, max_cost):
+def init_population(board: Board, population_count: int, max_cost: int) -> Population:
+    """Initialize populiation with <population_count> random boards."""
     population = []
     for i in range(population_count):
         new_board = deepcopy(board)
@@ -25,7 +31,8 @@ def init_population(board, population_count, max_cost):
     return population
 
 
-def select_from_dist(prob_dist):
+def select_from_dist(prob_dist: List[float]) -> int:
+    """Select an index randomly from a probability distribution."""
     x = uniform(0.0, 1.0)
     assert(x <= 1.0 and prob_dist[-1] == 1.0)
     for i in range(len(prob_dist)):
@@ -33,7 +40,8 @@ def select_from_dist(prob_dist):
             return i
 
 
-def combine(population, max_cost):
+def combine(population: Population, max_cost: int) -> Population:
+    """Generate the next generation of population by cross-over."""
     new_population = []
     piece_count = len(population[0][0].pieces)
     total_fitness = sum(fitness for _, fitness in population)
@@ -63,7 +71,8 @@ def combine(population, max_cost):
     return new_population
 
 
-def mutate(population, probability, max_cost):
+def mutate(population: Population, probability: float, max_cost: int) -> Population:
+    """Randomly change the location of one chess piece from <probability> of the population."""
     for i in range(len(population)):
         if uniform(0.0, 1.0) < probability:
             population[i][0].mutate()
@@ -71,7 +80,8 @@ def mutate(population, probability, max_cost):
     return population
 
 
-def solve_genetic(board):
+def solve_genetic(board: Board) -> None:
+    """Solve the N-ything problem with genetic algorithm."""
     max_num_generations = int(input('Enter maximum number of generations: '))
     population_count = int(input('Enter number of sample population in every generation: '))
     mutation_probability = float(input('Enter sample mutation probability: '))
