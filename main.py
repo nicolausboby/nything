@@ -21,6 +21,6 @@ if __name__ == "__main__":
 
     mboard = Board()
 
-    Hill.solve_hill(mboard)
-    annealing.solve_annealing(mboard)
+    # Hill.solve_hill(mboard)
+    # annealing.solve_annealing(mboard)
     genetic.solve_genetic(mboard)

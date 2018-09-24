@@ -12,45 +12,45 @@ from board import Board
 
 
 # Helpers
-def max_cost(board):
-    piece_count = len(board.pieces)
-    assert(piece_count > 0)
-    return piece_count * (piece_count - 1) if piece_count > 1 else 1
+def calculate_fitness(board, max_cost):
+    return (max_cost - board.calculate_cost()) ** 3
 
 
-def fitness(board):
-    return max_cost(board) - board.calculate_cost()
-
-
-def init_population(board, population_count):
+def init_population(board, population_count, max_cost):
     population = []
     for i in range(population_count):
         new_board = deepcopy(board)
         new_board.randomize_pieces()
-        population.append((new_board, fitness(new_board)))
+        population.append((new_board, calculate_fitness(new_board, max_cost)))
     return population
 
 
-def select(population):
-    total_fitness = sum(fitness for _, fitness in population)
-    parent_selection_dist = []
-    for sample, fitness in population:
-        selection_probability = round((fitness ** 2) / max_cost(population[0][0]))
-        parent_selection_dist.extend([sample for i in range(selection_probability)])
-    return parent_selection_dist
+def select_from_dist(prob_dist):
+    x = uniform(0.0, 1.0)
+    assert(x <= 1.0 and prob_dist[-1] == 1.0)
+    for i in range(len(prob_dist)):
+        if x < prob_dist[i]:
+            return i
 
 
-def combine(parent_selection_dist, population_count):
+def combine(population, max_cost):
     new_population = []
-    piece_count = len(parent_selection_dist[0].pieces)
-    assert(piece_count > 0)
-    for i in range(population_count):
-        parent_1_idx, parent_2_idx = randint(0, len(parent_selection_dist) - 1), \
-                randint(0, len(parent_selection_dist) - 1)
-        parent_1_pieces = deepcopy(parent_selection_dist[parent_1_idx].pieces)
-        parent_2_pieces = deepcopy(parent_selection_dist[parent_2_idx].pieces)
+    piece_count = len(population[0][0].pieces)
+    total_fitness = sum(fitness for _, fitness in population)
+    selection_prob_dist = []
+    
+    for idx, (sample, fitness) in enumerate(population):
+        selection_prob_dist.append((fitness / total_fitness) + \
+                (selection_prob_dist[idx - 1] if idx > 0 else 0))
+    selection_prob_dist[-1] = 1.0
+    
+    for i in range(len(population)):
+        parent_1_idx, parent_2_idx = select_from_dist(selection_prob_dist), \
+                select_from_dist(selection_prob_dist)
+        parent_1_pieces = deepcopy(population[parent_1_idx][0].pieces)
+        parent_2_pieces = deepcopy(population[parent_2_idx][0].pieces)
         combination_boundary_idx = randint(0, piece_count)
-        new_board = deepcopy(parent_selection_dist[parent_1_idx])
+        new_board = deepcopy(population[parent_1_idx][0])
         new_board.pieces = parent_1_pieces[:combination_boundary_idx] + \
                 parent_2_pieces[combination_boundary_idx:]
         
@@ -58,24 +58,17 @@ def combine(parent_selection_dist, population_count):
             combination_boundary_idx = (combination_boundary_idx - 1) % (piece_count + 1)
             new_board.pieces = parent_1_pieces[:combination_boundary_idx] + \
                     parent_2_pieces[combination_boundary_idx:]
-        new_population.append((new_board, fitness(new_board)))
+        new_population.append((new_board, calculate_fitness(new_board, max_cost)))
     
     return new_population
 
 
-def mutate(population, probability):
+def mutate(population, probability, max_cost):
     for i in range(len(population)):
         if uniform(0.0, 1.0) < probability:
             population[i][0].mutate()
-            population[i] = (population[i][0], fitness(population[i][0]))
+            population[i] = (population[i][0], calculate_fitness(population[i][0], max_cost))
     return population
-
-
-def solution(population):
-    for sample, _ in population:
-        if sample.same_color_cost() == 0:
-            return deepcopy(sample)
-    return None
 
 
 def solve_genetic(board):
@@ -88,19 +81,19 @@ def solve_genetic(board):
     best_avg_fitness = None
     start_time = time()
 
-    population = init_population(board, population_count)
+    max_cost = board.calculate_max_cost()
+    population = init_population(board, population_count, max_cost)
+
     for i in range(max_num_generations):
         print('Generation {}:'.format(i))
         
-        parent_selection_dist = select(population)
-        population = combine(parent_selection_dist, population_count)
-        population = mutate(population, mutation_probability)
+        population = combine(population, max_cost)
+        population = mutate(population, mutation_probability, max_cost)
         
         curr_best_config, curr_best_fitness = max((config for config in population), key=itemgetter(1))
         curr_best_avg_fitness = sum(fitness for _, fitness in population) / population_count
         print(' - Average population fitness: {}'.format(curr_best_avg_fitness))
         print(' - Best fitness: {}'.format(curr_best_fitness))
-        print(' - Best board configuration:')
         print()
         
         if best_config is None:
@@ -120,7 +113,7 @@ def solve_genetic(board):
     print('\n---------------------- GENETIC ALGORITHM -----------------------\n')
     print('Generation(s):    {}'.format(max_num_generations))
     print('\nRESULT:')
-    print('  > best population average fitness:   {}'.format(best_avg_fitness))
-    print('  > best fitness:    {}'.format(best_fitness))
-    print('  > elapsed time:    {} ms'.format((time() - start_time) * 1000))
+    print('  > Best average population fitness:   {}'.format(best_avg_fitness))
+    print('  > Best fitness:    {}'.format(best_fitness))
+    print('  > Elapsed time:    {} ms'.format((time() - start_time) * 1000))
     print('\n================================================================\n')

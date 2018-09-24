@@ -115,6 +115,18 @@ class Board:
         """
         return self.same_color_cost() - self.diff_color_point()
 
+    def calculate_max_cost(self):
+        """ calculate the possible maximum cost of the board
+        :return:
+        """
+        white_piece_count = sum(1 if piece.color == chesspiece.Chesspiece.white else 0 \
+                for piece in self.pieces if piece.color == chesspiece.Chesspiece.white)
+        black_piece_count = len(self.pieces) - white_piece_count
+        assert(white_piece_count > 0 or black_piece_count > 0)
+        white_max_cost = white_piece_count * (white_piece_count - 1) if white_piece_count > 1 else 1
+        black_max_cost = black_piece_count * (black_piece_count - 1) if black_piece_count > 1 else 1
+        return white_max_cost + black_max_cost
+
     # same_color_cost mengembalikan total nilai cost dari pieces yang berwarna sama
     def same_color_cost(self):
         total = 0
