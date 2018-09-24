@@ -186,27 +186,55 @@ class Board:
 
         return total
 
+    # def print_board(self):
+    #     """
+    #     Print the current state of board with its pieces
+    #     """
+    #     board = [['.' for i in range(9)] for j in range(9)]
+
+    #     for piece in self.pieces:
+    #         if piece.piece_type == chesspiece.Chesspiece.knight:
+    #             piece_type_char = 'K'
+    #         elif piece.piece_type == chesspiece.Chesspiece.bishop:
+    #             piece_type_char = 'B'
+    #         elif piece.piece_type == chesspiece.Chesspiece.rook:
+    #             piece_type_char = 'R'
+    #         elif piece.piece_type == chesspiece.Chesspiece.queen:
+    #             piece_type_char = 'Q'
+
+    #         if piece.color == chesspiece.Chesspiece.black:
+    #             piece_type_char = piece_type_char.lower()
+
+    #         board[piece.x][piece.y] = piece_type_char
+
+    #     for i in range(8, 0, -1):
+    #         for j in range(1, 9):
+    #             print(board[j][i], end=' ')
+    #         print()
+    #     print('\n', self.same_color_cost(), '\t', self.diff_color_point())
+
+    
     def print_board(self):
-        """
-        Print the current state of board with its pieces
-        """
+        """Print board configuration along with it's cost and points."""
+        piece_chars = {
+            chesspiece.Chesspiece.black: {
+                chesspiece.Chesspiece.bishop: '\u2657',
+                chesspiece.Chesspiece.rook: '\u2656',
+                chesspiece.Chesspiece.queen: '\u2655',
+                chesspiece.Chesspiece.knight: '\u2658',
+            },
+            chesspiece.Chesspiece.white: {
+                chesspiece.Chesspiece.bishop: '\u265d',
+                chesspiece.Chesspiece.rook: '\u265c',
+                chesspiece.Chesspiece.queen: '\u265b',
+                chesspiece.Chesspiece.knight: '\u265e',
+            }
+        }
+
         board = [['.' for i in range(9)] for j in range(9)]
 
         for piece in self.pieces:
-            if piece.piece_type == chesspiece.Chesspiece.knight:
-                piece_type_char = 'K'
-            elif piece.piece_type == chesspiece.Chesspiece.bishop:
-                piece_type_char = 'B'
-            elif piece.piece_type == chesspiece.Chesspiece.rook:
-                piece_type_char = 'R'
-            elif piece.piece_type == chesspiece.Chesspiece.queen:
-                piece_type_char = 'Q'
-
-            if piece.color == chesspiece.Chesspiece.black:
-                piece_type_char = piece_type_char.lower()
-
-            board[piece.x][piece.y] = piece_type_char
-
+            board[piece.x][piece.y] = piece_chars[piece.color][piece.piece_type]
         for i in range(8, 0, -1):
             for j in range(1, 9):
                 print(board[j][i], end=' ')

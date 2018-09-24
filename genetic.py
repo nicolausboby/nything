@@ -1,6 +1,6 @@
-# FIRST project
-# For solving N-ything problem, a modified version of N-Queens problem
-# Genetic Algorithm
+# 
+# Genetic Algorithm for solving the N-ything problem.
+#
 
 from copy import deepcopy
 from random import randint, uniform
@@ -18,7 +18,7 @@ Population = List[Tuple[Board, int]]
 
 def calculate_fitness(board: Board, max_cost: int) -> int:
     """Calculate the fitness of a board configuration."""
-    return (max_cost - board.calculate_cost()) ** 3
+    return (max_cost - board.calculate_cost()) ** 2
 
 
 def init_population(board: Board, population_count: int, max_cost: int) -> Population:
@@ -94,17 +94,12 @@ def solve_genetic(board: Board) -> None:
     max_cost = board.calculate_max_cost()
     population = init_population(board, population_count, max_cost)
 
-    for i in range(max_num_generations):
-        print('Generation {}:'.format(i))
-        
+    for i in range(max_num_generations):    
         population = combine(population, max_cost)
         population = mutate(population, mutation_probability, max_cost)
         
         curr_best_config, curr_best_fitness = max((config for config in population), key=itemgetter(1))
         curr_best_avg_fitness = sum(fitness for _, fitness in population) / population_count
-        print(' - Average population fitness: {}'.format(curr_best_avg_fitness))
-        print(' - Best fitness: {}'.format(curr_best_fitness))
-        print()
         
         if best_config is None:
             best_config = curr_best_config
@@ -116,6 +111,14 @@ def solve_genetic(board: Board) -> None:
                 best_fitness = curr_best_fitness
             if curr_best_avg_fitness > best_avg_fitness:
                 best_avg_fitness = curr_best_avg_fitness
+
+        print('Generation {}:'.format(i))
+        print()
+        best_config.print_board()
+        print()
+        print(' - Average population fitness: {}'.format(curr_best_avg_fitness))
+        print(' - Best fitness: {}'.format(curr_best_fitness))
+        print()
 
     print('\nBEST SOLUTION:\n')
     best_config.print_board()
