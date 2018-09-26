@@ -139,6 +139,6 @@ def solve_hill(board):
 	print('\nBEST RESULT:')
 	print('  > best cost    :{}'.format(best_result['best_cost']))
 	print('  > total step   :{}'.format(best_result['step']))
-	print('  > iteration time: {} ms'.format(round(best_result['total_time'] * 1000, 3)))
+	print('  > running time: {} ms\n'.format(round(best_result['total_time'] * 1000, 3)))
 	best_result['board'].print_board()
 	print('\n================================================================\n')
