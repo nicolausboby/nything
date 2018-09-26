@@ -2,12 +2,9 @@
 # For solving N-ything problem, a modified version of N-Queens problem
 # Hill Climbing Algorithm
 
-import board
 import time
-import random
-import copy
+from copy import deepcopy
 import chesspiece
-from annealing import find_movement
 
 
 def solve_hill(board):
@@ -17,7 +14,7 @@ def solve_hill(board):
 
 	# I.S : unsolved board
 	# F.S : solved board (global or local maximum)
-	Solution printed out
+	Solution is printed out
 	"""
 	input_runs = input('enter amount of trial: ')
 	print('trial run(s) = ' + str(input_runs))
@@ -25,6 +22,7 @@ def solve_hill(board):
 	print('limit = ' + str(input_limit) + '\n')
 	limit = int(input_limit)
 	best_result = {}
+	total_time = 0
 	success = 0
 
 	def get_best_result(new_result):
@@ -37,6 +35,9 @@ def solve_hill(board):
 			return new_result
 		elif best_result['best_cost'] > new_result['best_cost']:
 			return new_result
+		elif best_result['best_cost'] == new_result['best_cost']:
+			if best_result['total_time'] > new_result['total_time']:
+				return new_result
 		return best_result
 
 	def solver(board, limit):
@@ -50,33 +51,65 @@ def solve_hill(board):
 		ccost = 0
 		step = improve = 0
 		start_time = time.time()
-		while step < limit and best_cost > 0:
-			step += 1
+		peak = False
+		while step < limit and not peak:
 			ccost = board.calculate_cost()
-			all_pieces = board.pieces
-			select_piece = all_pieces[random.randint(0, len(all_pieces) - 1)]
-			allmove = find_movement(select_piece, board)
-			while len(allmove) > 0:
-				temp_board = copy.deepcopy(board)
-				select_move = allmove[random.randint(0, len(allmove) - 1)]
-				allmove.remove(select_move)
-				temp_board.pieces.remove(select_piece)
-				temp_board.pieces.append(
-					chesspiece.Chesspiece(select_piece.piece_type, select_piece.color, select_move[0], select_move[1]))
-				next_cost = temp_board.calculate_cost()
-				dE = next_cost - ccost
-				if dE < 0.0:
-					board = temp_board
-					ccost = next_cost
-					improve += 1
-				if next_cost < best_cost:
-					best_cost = next_cost
-				break
+			all_pieces = deepcopy(board.pieces)
+			proceed = True
+			while len(all_pieces) > 0 and proceed:
+				select_piece = all_pieces[0]
+				all_possible_move = []
+				for i in range(1, 9):
+					for j in range(1, 9):
+						if not board.is_exist(i, j):
+							all_possible_move.append([i, j])
+
+				all_move_cost = {}
+
+				# find all of the possible cost
+				for move in all_possible_move:
+					temp_board = deepcopy(board)
+					temp_board.pieces.remove(select_piece)
+					temp_board.pieces.append(
+						chesspiece.Chesspiece(select_piece.piece_type, select_piece.color, move[0], move[1]))
+					all_move_cost.update({(move[0], move[1]): temp_board.calculate_cost()})
+					del temp_board
+
+				# for each move in all move cost, if there is a better move, move the piece
+				while len(all_move_cost) > 0:
+					# print(all_move_cost)
+					local_best_move = min(all_move_cost.items(), key=lambda x: x[1])
+					# print(local_best_move)
+					next_cost = local_best_move[1]
+					temp_board = deepcopy(board)
+					new_x = local_best_move[0][0]
+					new_y = local_best_move[0][1]
+					temp_board.pieces.remove(select_piece)
+					temp_board.pieces.append(
+						chesspiece.Chesspiece(select_piece.piece_type, select_piece.color, new_x, new_y))
+					if next_cost < ccost:
+						board = temp_board
+						ccost = next_cost
+						improve += 1
+						step += 1
+						proceed = False
+						if next_cost < best_cost:
+							best_cost = next_cost
+						break
+					else:  # if the next cost > ccost
+						all_move_cost.pop(local_best_move[0])
+						# print(all_move_cost)
+						if len(all_move_cost) <= 0:
+							all_pieces.remove(select_piece)
+							if len(all_pieces) <= 0:
+								peak = True
+								proceed = False
+							break
+
 		end_time = time.time()
 		total_time = end_time - start_time
 		result = {
 			"best_cost": best_cost,
-			"final_cost": ccost,
 			"total_time": total_time,
 			"improve": improve,
 			"step": step,
@@ -89,6 +122,7 @@ def solve_hill(board):
 	for i in range(int(input_runs)):
 		board.randomize_pieces()
 		current_result = solver(board, limit)
+		total_time += current_result['total_time']
 		if current_result['best_cost'] == 0:
 			success += 1
 		best_result = get_best_result(current_result)
@@ -98,15 +132,13 @@ def solve_hill(board):
 	# Output section
 	#
 	print('\n')
-	best_result['board'].print_board()
 	print('\n\n================================================================')
 	print('\n------------------- HILL CLIMBING ALGORITHM -------------------\n')
-	print('Total run(s):     {}'.format(input_runs))
-	print('Solution found:   {} times, with statistic {} %'.format(success, success_stat * 100))
+	print('Total run(s):	{}'.format(input_runs))
+	print('Elapsed time:	{} ms'.format(round(total_time*1000, 3)))
 	print('\nBEST RESULT:')
-	print('  > final cost:   {}'.format(best_result['final_cost']))
-	print('  > best cost:    {}'.format(best_result['best_cost']))
-	print('  > total step:   {}'.format(best_result['step']))
-	print('  > improved:     {}'.format(best_result['improve']))
-	print('  > elapsed time: {} ms'.format(best_result['total_time'] * 1000))
+	print('  > best cost    :{}'.format(best_result['best_cost']))
+	print('  > total step   :{}'.format(best_result['step']))
+	print('  > iteration time: {} ms'.format(round(best_result['total_time'] * 1000, 3)))
+	best_result['board'].print_board()
 	print('\n================================================================\n')
