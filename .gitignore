@@ -1,3 +1,4 @@
 /.idea
+/_pycache_
 *.pyc
 hill_first_choice.py
