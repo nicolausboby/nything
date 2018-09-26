@@ -25,6 +25,7 @@ def solve_annealing(board):
 	limit = int(input_limit)
 	best_result = {}
 	success = 0
+	total_time = 0
 
 	def solver(board, limit):
 		""" function to solve a simulated algorithm once, iteration limited
@@ -43,7 +44,7 @@ def solve_annealing(board):
 
 		# loop the process of each iteration
 		# the loop will stop if the limit step has been reached, or solution has been found
-		while step < limit and best_cost > 0:
+		while step < limit :
 			t = tmax * np.exp(r * step / limit)
 
 			# making sure that t is a feasible temperature parameter, above zero
@@ -54,7 +55,11 @@ def solve_annealing(board):
 			ccost = board.calculate_cost()
 			all_pieces = board.pieces
 			select_piece = all_pieces[random.randint(0, len(all_pieces) - 1)]
-			allmove = find_movement(select_piece, board)
+			allmove = []
+			for i in range(1, 9):
+				for j in range(1, 9):
+					if not board.is_exist(i, j):
+						allmove.append([i, j])
 
 			# checking a random move of the previously selected piece
 			# if the move has better 'energy' select it,
@@ -116,6 +121,7 @@ def solve_annealing(board):
 	for i in range(int(input_runs)):
 		board.randomize_pieces()
 		current_result = solver(board, limit)
+		total_time += current_result['total_time']
 		if current_result['best_cost'] == 0:
 			success += 1
 		best_result = get_best_result(current_result)
@@ -126,140 +132,16 @@ def solve_annealing(board):
 	# Output section
 	#
 	print('\n')
-	best_result['board'].print_board()
 	print('\n\n================================================================')
 	print('\n-----------------SIMULATED ANNEALING ALGORITHM------------------\n')
 	print('Total run(s):     {}'.format(input_runs))
-	print('Solution found:   {} times, with statistic {} %'.format(success, success_stat * 100))
+	print('Elapsed time:	{} ms'.format(round(total_time * 1000, 3)))
 	print('\nBEST RESULT:')
 	print('  > final cost:   {}'.format(best_result['final_cost']))
 	print('  > best cost:    {}'.format(best_result['best_cost']))
 	print('  > total step:   {}'.format(best_result['step']))
 	print('  > improved:     {}'.format(best_result['improve']))
 	print('  > accepted:     {}'.format(best_result['accept']))
-	print('  > elapsed time: {} ms'.format(best_result['total_time'] * 1000))
+	print('  > running time: {} ms\n'.format(best_result['total_time'] * 1000))
+	best_result['board'].print_board()
 	print('\n================================================================\n')
-
-
-def find_movement(piece, board):
-	""" finds all of the possible movement of a input chess piece ont the board
-
-	:param piece: selected chess piece
-	:param board: current state of the board
-
-	:return: movement -> a list of possible moves
-	"""
-	movement = []
-
-	def find_horizontal(piece, board):
-		found_right = False
-		found_left = False
-		x = piece.x - 1
-		y = piece.y
-		hmove = []
-		while x > 0 and not found_left:
-			if board.is_exist(x, y):
-				found_left = True
-			else:
-				hmove.append([x, y])
-				x -= 1
-
-		x = piece.x + 1
-		while x < 9 and not found_right:
-			if board.is_exist(x, y):
-				found_right = True
-			else:
-				hmove.append([x, y])
-				x += 1
-		return hmove
-
-	def find_vertical(piece, board):
-		found_up = False
-		found_down = False
-		x = piece.x
-		y = piece.y - 1
-		vmove = []
-		while y > 0 and not found_down:
-			if board.is_exist(x, y):
-				found_down = True
-			else:
-				vmove.append([x, y])
-				y -= 1
-
-		y = piece.y + 1
-		while y < 9 and not found_up:
-			if board.is_exist(x, y):
-				found_up = True
-			else:
-				vmove.append([x, y])
-				y += 1
-		return vmove
-
-	def find_diagonal(piece, board):
-		found_up_left = False
-		found_up_right = False
-		found_down_left = False
-		found_down_right = False
-		x = piece.x - 1
-		y = piece.y - 1
-		dmove = []
-		while x > 0 and y > 0 and not found_down_left:
-			if board.is_exist(x, y):
-				found_down_left = True
-			else:
-				dmove.append([x, y])
-				x -= 1
-				y -= 1
-
-		x = piece.x - 1
-		y = piece.y + 1
-		while x > 0 and y < 9 and not found_up_left:
-			if board.is_exist(x, y):
-				found_up_left = True
-			else:
-				dmove.append([x, y])
-				x -= 1
-				y += 1
-
-		x = piece.x + 1
-		y = piece.y + 1
-		while x < 9 and y < 9 and not found_up_right:
-			if board.is_exist(x, y):
-				found_up_right = True
-			else:
-				dmove.append([x, y])
-				x += 1
-				y += 1
-
-		x = piece.x + 1
-		y = piece.y - 1
-		while x < 9 and y > 0 and not found_down_right:
-			if board.is_exist(x, y):
-				found_down_right = True
-			else:
-				dmove.append([x, y])
-				x += 1
-				y -= 1
-		return dmove
-
-	def knight_move(piece, board):
-		kmove = []
-		for x in range(0, 9):
-			for y in range(0, 9):
-				if piece.can_attack_knight(x, y) and not board.is_exist(x, y):
-					kmove.append([x, y])
-		return kmove
-
-	if piece.piece_type == chesspiece.Chesspiece.queen:
-		movement.extend(find_horizontal(piece, board))
-		movement.extend(find_vertical(piece, board))
-		movement.extend(find_diagonal(piece, board))
-	elif piece.piece_type == chesspiece.Chesspiece.rook:
-		movement.extend(find_horizontal(piece, board))
-		movement.extend(find_vertical(piece, board))
-	elif piece.piece_type == chesspiece.Chesspiece.bishop:
-		movement.extend(find_diagonal(piece, board))
-	elif piece.piece_type == chesspiece.Chesspiece.knight:
-		movement.extend(knight_move(piece, board))
-
-	return movement
