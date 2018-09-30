@@ -37,7 +37,7 @@ def solve_annealing(board):
 		best_cost = 9999
 		ccost = 0
 		tmax = 1000
-		tmin = 0.1
+		tmin = 0.0001
 		r = -np.log(tmax / tmin)
 		start_time = time.time()
 		step = improve = accept = 0
