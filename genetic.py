@@ -24,7 +24,7 @@ def calculate_fitness(board: Board, max_cost: int) -> int:
 def init_population(board: Board, population_count: int, max_cost: int) -> Population:
     """Initialize populiation with <population_count> random boards."""
     population = []
-    for i in range(population_count):
+    for _ in range(population_count):
         new_board = deepcopy(board)
         new_board.randomize_pieces()
         population.append((new_board, calculate_fitness(new_board, max_cost)))
@@ -47,12 +47,12 @@ def combine(population: Population, max_cost: int) -> Population:
     total_fitness = sum(fitness for _, fitness in population)
     selection_prob_dist = []
     
-    for idx, (sample, fitness) in enumerate(population):
+    for idx, (_, fitness) in enumerate(population):
         selection_prob_dist.append((fitness / total_fitness) + \
                 (selection_prob_dist[idx - 1] if idx > 0 else 0))
     selection_prob_dist[-1] = 1.0
     
-    for i in range(len(population)):
+    for _ in range(len(population)):
         parent_1_idx, parent_2_idx = select_from_dist(selection_prob_dist), \
                 select_from_dist(selection_prob_dist)
         parent_1_pieces = deepcopy(population[parent_1_idx][0].pieces)

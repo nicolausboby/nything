@@ -22,7 +22,7 @@ class Board:
                 for line in lines:
                     line.replace('\n', '')
                     row = line.split()
-                    for i in range(int(row[2])):
+                    for _ in range(int(row[2])):
                         if row[0] == 'WHITE':
                             color = chesspiece.Chesspiece.white
                         elif row[0] == 'BLACK':

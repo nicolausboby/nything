@@ -121,7 +121,7 @@ def solve_hill(board):
 
 	# continuation of the main function
 	# running trials run, and searching for the best result
-	for i in range(int(input_runs)):
+	for _ in range(int(input_runs)):
 		board.randomize_pieces()
 		current_result = solver(board, limit)
 		total_time += current_result['total_time']
@@ -137,11 +137,14 @@ def solve_hill(board):
 	print('\n')
 	print('\n\n================================================================')
 	print('\n------------------- HILL CLIMBING ALGORITHM -------------------\n')
-	print('Total run(s):	{}'.format(input_runs))
-	print('Elapsed time:	{} ms'.format(round(total_time*1000, 3)))
-	print('\nBEST RESULT:')
-	print('  > best cost    :{}'.format(best_result['best_cost']))
-	print('  > total step   :{}'.format(best_result['step']))
-	print('  > running time: {} ms\n'.format(round(best_result['total_time'] * 1000, 3)))
+	print('STATISTIC:')
+	print('  > Total run(s) : {}'.format(input_runs))
+	print('  > Elapsed time : {} ms'.format(round(total_time*1000, 3)))
+	print('  > n of success : {}'.format(success))
+	print('  > Success rate : {}%\n'.format(success_stat * 100))
+	print('BEST RESULT:')
+	print('  > Best cost    : {}'.format(best_result['best_cost']))
+	print('  > Total step   : {}'.format(best_result['step']))
+	print('  > Running time : {} ms\n'.format(round(best_result['total_time'] * 1000, 3)))
 	best_result['board'].print_board()
 	print('\n================================================================\n')
