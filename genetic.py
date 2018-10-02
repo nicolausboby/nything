@@ -82,6 +82,8 @@ def mutate(population: Population, probability: float, max_cost: int) -> Populat
 
 def solve_genetic(board: Board) -> None:
     """Solve the N-ything problem with genetic algorithm."""
+    print('\nGenetic Algorithm')
+    print('----------------------------------------')
     max_num_generations = int(input('Enter maximum number of generations: '))
     population_count = int(input('Enter number of sample population in every generation: '))
     mutation_probability = float(input('Enter sample mutation probability: '))

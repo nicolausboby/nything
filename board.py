@@ -251,4 +251,5 @@ class Board:
             for j in range(1, 9):
                 print(board[j][i], end=' ')
             print()
-        print('\n', self.same_color_cost(), '\t', self.diff_color_point())
+        print('\nSame-Color Cost      : ', self.same_color_cost())
+        print('Different-Color Cost : ', self.diff_color_point())

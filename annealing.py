@@ -18,10 +18,12 @@ def solve_annealing(board):
 	Solution printed out
 	"""
 	# initialisation and read input parameters
-	input_runs = input('enter amount of trial: ')
-	print('trial run(s) = ' + str(input_runs))
-	input_limit = input('enter iteration limit: ')
-	print('limit = ' + str(input_limit) + '\n')
+	print('\nSimulated Annealing')
+	print('----------------------------------------')
+	input_runs = input('Enter amount of trial: ')
+	print('Trial run(s) = ' + str(input_runs))
+	input_limit = input('Enter iteration limit: ')
+	print('Limit = ' + str(input_limit) + '\n')
 	limit = int(input_limit)
 	best_result = {}
 	success = 0
@@ -125,8 +127,8 @@ def solve_annealing(board):
 		if current_result['best_cost'] == 0:
 			success += 1
 		best_result = get_best_result(current_result)
-		print(str(round((current_result['total_time'] * 1000), 4)) + ' ms' + ', cost =' + str(
-			current_result['best_cost']))
+		print('{} ms, cost = {}, step = {}'. \
+			format(round((current_result['total_time'] * 1000), 4), current_result['best_cost'], current_result['step']))
 	success_stat = round((success / int(input_runs)), 4)
 
 	# Output section
